@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Dashboard
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Dashboard</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <h2 class="ion-margin-bottom">My Learning Path</h2>
+
+  <ion-list>
+    <ion-card *ngFor="let topic of learningTopics">
+      <ion-card-header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <ion-card-title>{{ topic.title }}</ion-card-title>
+          <ion-badge [color]="topic.status === 'Completed' ? 'success' : 'primary'">{{ topic.status }}</ion-badge>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ topic.category }}</p>
+        <ion-progress-bar [value]="topic.progress" class="ion-margin-top"></ion-progress-bar>
+        <p class="ion-text-end ion-no-margin" style="font-size: 0.8em; margin-top: 5px;">{{ topic.progress * 100 }}%</p>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+</ion-content>

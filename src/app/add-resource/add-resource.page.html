@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Add Resource
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Add Resource</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-list>
+    <ion-item>
+      <ion-input label="Title" labelPlacement="floating" placeholder="Enter topic title"
+        [(ngModel)]="resource.title"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select label="Category" labelPlacement="floating" placeholder="Select category"
+        [(ngModel)]="resource.category">
+        <ion-select-option value="mobile">Mobile Dev</ion-select-option>
+        <ion-select-option value="frontend">Frontend</ion-select-option>
+        <ion-select-option value="backend">Backend</ion-select-option>
+        <ion-select-option value="design">Design</ion-select-option>
+        <ion-select-option value="ai">AI</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-textarea label="Description" labelPlacement="floating" placeholder="Enter description or notes" rows="5"
+        [(ngModel)]="resource.description"></ion-textarea>
+    </ion-item>
+  </ion-list>
+
+  <div class="ion-padding">
+    <ion-button expand="block" (click)="saveResource()">Save Resource</ion-button>
+  </div>
+</ion-content>
