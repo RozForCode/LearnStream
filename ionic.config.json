@@ -1,0 +1,7 @@
+{
+  "name": "LearnStream",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
