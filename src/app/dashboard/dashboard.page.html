@@ -7,26 +7,31 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Dashboard</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="welcome-header">
+    <h1 class="gradient-text">Hello, Learner! 🚀</h1>
+    <p>Ready to crush your goals today?</p>
+  </div>
 
-  <h2 class="ion-margin-bottom">My Learning Path</h2>
+  <h2 class="ion-margin-bottom ion-margin-start" style="font-weight: 600; color: var(--ion-color-dark);">My Learning
+    Path</h2>
 
-  <ion-list>
-    <ion-card *ngFor="let topic of learningTopics">
+  <ion-list style="background: transparent;">
+    <ion-card *ngFor="let topic of learningTopics" class="fun-card"
+      [ngClass]="{'completed': topic.status === 'Completed', 'started': topic.status === 'Started'}">
       <ion-card-header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <ion-card-title>{{ topic.title }}</ion-card-title>
-          <ion-badge [color]="topic.status === 'Completed' ? 'success' : 'primary'">{{ topic.status }}</ion-badge>
+          <ion-badge
+            [color]="topic.status === 'Completed' ? 'success' : (topic.status === 'Started' ? 'secondary' : 'primary')">{{
+            topic.status }}</ion-badge>
         </div>
       </ion-card-header>
       <ion-card-content>
-        <p>{{ topic.category }}</p>
-        <ion-progress-bar [value]="topic.progress" class="ion-margin-top"></ion-progress-bar>
-        <p class="ion-text-end ion-no-margin" style="font-size: 0.8em; margin-top: 5px;">{{ topic.progress * 100 }}%</p>
+        <p style="color: var(--ion-color-medium); margin-bottom: 10px;">{{ topic.category }}</p>
+        <ion-progress-bar [value]="topic.progress"></ion-progress-bar>
+        <p class="ion-text-end ion-no-margin"
+          style="font-size: 0.8em; margin-top: 8px; font-weight: 600; color: var(--ion-color-primary);">{{
+          topic.progress * 100 }}%</p>
       </ion-card-content>
     </ion-card>
   </ion-list>

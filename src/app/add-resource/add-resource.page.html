@@ -7,15 +7,14 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Add Resource</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="welcome-header">
+    <h1 class="gradient-text">Add New Goal 🎯</h1>
+    <p>What do you want to learn next?</p>
+  </div>
 
-  <ion-list>
+  <ion-list lines="none">
     <ion-item>
-      <ion-input label="Title" labelPlacement="floating" placeholder="Enter topic title"
+      <ion-input label="Title" labelPlacement="floating" placeholder="e.g. React Native"
         [(ngModel)]="resource.title"></ion-input>
     </ion-item>
 
@@ -31,12 +30,15 @@
     </ion-item>
 
     <ion-item>
-      <ion-textarea label="Description" labelPlacement="floating" placeholder="Enter description or notes" rows="5"
+      <ion-textarea label="Description" labelPlacement="floating" placeholder="Add some notes or links..." rows="5"
         [(ngModel)]="resource.description"></ion-textarea>
     </ion-item>
   </ion-list>
 
-  <div class="ion-padding">
-    <ion-button expand="block" (click)="saveResource()">Save Resource</ion-button>
+  <div class="ion-padding-top">
+    <ion-button expand="block" (click)="saveResource()">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Save Resource
+    </ion-button>
   </div>
 </ion-content>

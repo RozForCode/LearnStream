@@ -7,18 +7,17 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-list lines="none">
-    <ion-item *ngFor="let msg of messages">
-      <div [class]="msg.sender === 'user' ? 'message-container user' : 'message-container ai'"
-        style="width: 100%; display: flex; flex-direction: column;">
-        <ion-text [color]="msg.sender === 'user' ? 'primary' : 'medium'">
-          <p style="padding: 10px; border-radius: 10px; background: var(--ion-color-light); display: inline-block;"
-            [style.align-self]="msg.sender === 'user' ? 'flex-end' : 'flex-start'"
-            [style.background]="msg.sender === 'user' ? 'var(--ion-color-primary-tint)' : 'var(--ion-color-light)'"
-            [style.color]="msg.sender === 'user' ? 'var(--ion-color-primary-contrast)' : ''">
-            {{ msg.text }}
-          </p>
-        </ion-text>
+  <div class="welcome-header ion-text-center ion-margin-bottom">
+    <h2 class="gradient-text" style="font-size: 24px;">AI Tutor 🤖</h2>
+    <p style="color: var(--ion-color-medium);">Ask me anything!</p>
+  </div>
+
+  <ion-list lines="none" style="background: transparent;">
+    <ion-item *ngFor="let msg of messages" style="--background: transparent; --padding-start: 0;">
+      <div [class]="msg.sender === 'user' ? 'message-container user' : 'message-container ai'">
+        <p>
+          {{ msg.text }}
+        </p>
       </div>
     </ion-item>
   </ion-list>
