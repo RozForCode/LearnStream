@@ -7,14 +7,14 @@ import { searchOutline, closeCircleOutline } from 'ionicons/icons';
 import { InAppBrowserService } from '../../services/in-app-browser/in-app-browser.service';
 
 @Component({
-    selector: 'app-in-app-search',
-    template: `
+  selector: 'app-in-app-search',
+  template: `
     <ion-list lines="none" class="search-container">
       <ion-item class="search-input-item">
         <ion-input
-          label="Search URL"
+          label="Search Google"
           labelPlacement="floating"
-          placeholder="https://example.com"
+          placeholder="Type your query..."
           [(ngModel)]="searchUrl"
           (keyup.enter)="search()">
         </ion-input>
@@ -31,7 +31,7 @@ import { InAppBrowserService } from '../../services/in-app-browser/in-app-browse
       </div>
     </ion-list>
   `,
-    styles: [`
+  styles: [`
     .search-container {
       background: transparent;
       padding: 0;
@@ -45,48 +45,46 @@ import { InAppBrowserService } from '../../services/in-app-browser/in-app-browse
       margin-top: 10px;
     }
   `],
-    standalone: true,
-    imports: [CommonModule, FormsModule, IonButton, IonIcon, IonInput, IonItem, IonList]
+  standalone: true,
+  imports: [CommonModule, FormsModule, IonButton, IonIcon, IonInput, IonItem, IonList]
 })
 export class InAppSearchComponent implements OnInit, OnDestroy {
-    @Input() initialUrl: string = '';
-    searchUrl: string = '';
-    isBrowserOpen: boolean = false;
+  @Input() initialUrl: string = '';
+  searchUrl: string = '';
+  isBrowserOpen: boolean = false;
 
-    constructor(private iab: InAppBrowserService) {
-        addIcons({ searchOutline, closeCircleOutline });
+  constructor(private iab: InAppBrowserService) {
+    addIcons({ searchOutline, closeCircleOutline });
+  }
+
+  ngOnInit() {
+    if (this.initialUrl) {
+      this.searchUrl = this.initialUrl;
     }
 
-    ngOnInit() {
-        if (this.initialUrl) {
-            this.searchUrl = this.initialUrl;
-        }
+    this.iab.addListener('browserClosed', () => {
+      console.log('Browser closed event received');
+      this.isBrowserOpen = false;
+    });
+  }
 
-        this.iab.addListener('browserClosed', () => {
-            console.log('Browser closed event received');
-            this.isBrowserOpen = false;
-        });
-    }
+  ngOnDestroy() {
+    this.iab.removeAllListeners();
+  }
 
-    ngOnDestroy() {
-        this.iab.removeAllListeners();
-    }
+  search() {
+    if (!this.searchUrl) return;
 
-    search() {
-        if (!this.searchUrl) return;
+    const query = encodeURIComponent(this.searchUrl);
+    const url = `https://www.google.com/search?q=${query}`;
 
-        let url = this.searchUrl;
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            url = 'https://' + url;
-        }
+    this.isBrowserOpen = true;
+    this.iab.openInWebView(url);
+  }
 
-        this.isBrowserOpen = true;
-        this.iab.openInWebView(url);
-    }
-
-    closeBrowser() {
-        this.iab.close();
-        // Listener will update state, but we can force it here too for responsiveness
-        this.isBrowserOpen = false;
-    }
+  closeBrowser() {
+    this.iab.close();
+    // Listener will update state, but we can force it here too for responsiveness
+    this.isBrowserOpen = false;
+  }
 }
