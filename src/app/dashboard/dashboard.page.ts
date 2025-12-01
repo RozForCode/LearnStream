@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
 import { InAppSearchComponent } from '../components/in-app-search/in-app-search.component';
+import { Toast } from '@capacitor/toast';
 
 @Component({
   selector: 'app-dashboard',
@@ -86,8 +87,16 @@ export class DashboardPage {
     }
   }
 
-  onSubtaskChange(event: any, subtask: any, topic: any) {
+  async onSubtaskChange(event: any, subtask: any, topic: any) {
     subtask.completed = event.detail.checked;
     this.updateProgress(topic);
+
+    if (subtask.completed) {
+      await Toast.show({
+        text: `Subtask '${subtask.title}' completed!`,
+        duration: 'short',
+        position: 'bottom',
+      });
+    }
   }
 }
