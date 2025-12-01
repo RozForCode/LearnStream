@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonCheckbox } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonCheckbox, IonTextarea, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { addIcons } from 'ionicons';
+import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: 'dashboard.page.html',
   styleUrls: ['dashboard.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCheckbox, CommonModule, FormsModule],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCheckbox, IonTextarea, IonButton, IonIcon, CommonModule, FormsModule],
 })
 export class DashboardPage {
   learningTopics = [
@@ -19,10 +21,10 @@ export class DashboardPage {
       progress: 0.75,
       status: 'In Progress',
       subtasks: [
-        { id: 101, title: 'Install Ionic CLI', completed: true },
-        { id: 102, title: 'Create first app', completed: true },
-        { id: 103, title: 'Understand project structure', completed: true },
-        { id: 104, title: 'Build a UI with Components', completed: false }
+        { id: 101, title: 'Install Ionic CLI', completed: true, notes: 'npm install -g @ionic/cli', expanded: false },
+        { id: 102, title: 'Create first app', completed: true, notes: 'ionic start myApp tabs', expanded: false },
+        { id: 103, title: 'Understand project structure', completed: true, notes: '', expanded: false },
+        { id: 104, title: 'Build a UI with Components', completed: false, notes: '', expanded: false }
       ]
     },
     {
@@ -32,9 +34,9 @@ export class DashboardPage {
       progress: 0.30,
       status: 'In Progress',
       subtasks: [
-        { id: 201, title: 'Read Documentation', completed: true },
-        { id: 202, title: 'Refactor legacy code', completed: false },
-        { id: 203, title: 'Use computed signals', completed: false }
+        { id: 201, title: 'Read Documentation', completed: true, notes: 'https://angular.io/guide/signals', expanded: false },
+        { id: 202, title: 'Refactor legacy code', completed: false, notes: '', expanded: false },
+        { id: 203, title: 'Use computed signals', completed: false, notes: '', expanded: false }
       ]
     },
     {
@@ -44,8 +46,8 @@ export class DashboardPage {
       progress: 1.0,
       status: 'Completed',
       subtasks: [
-        { id: 301, title: 'Grid Template Areas', completed: true },
-        { id: 302, title: 'Auto-fill vs Auto-fit', completed: true }
+        { id: 301, title: 'Grid Template Areas', completed: true, notes: '', expanded: false },
+        { id: 302, title: 'Auto-fill vs Auto-fit', completed: true, notes: '', expanded: false }
       ]
     },
     {
@@ -55,14 +57,16 @@ export class DashboardPage {
       progress: 0.10,
       status: 'Started',
       subtasks: [
-        { id: 401, title: 'Get API Key', completed: true },
-        { id: 402, title: 'Make first request', completed: false },
-        { id: 403, title: 'Handle errors', completed: false }
+        { id: 401, title: 'Get API Key', completed: true, notes: '', expanded: false },
+        { id: 402, title: 'Make first request', completed: false, notes: '', expanded: false },
+        { id: 403, title: 'Handle errors', completed: false, notes: '', expanded: false }
       ]
     },
   ];
 
-  constructor() { }
+  constructor() {
+    addIcons({ chevronDownOutline, chevronUpOutline });
+  }
 
   updateProgress(topic: any) {
     if (!topic.subtasks || topic.subtasks.length === 0) {
@@ -79,5 +83,12 @@ export class DashboardPage {
     } else {
       topic.status = 'Started'; // Or 'Not Started' depending on logic
     }
+  }
+
+  onSubtaskChange(topic: any) {
+    // Wait for ngModel to update
+    setTimeout(() => {
+      this.updateProgress(topic);
+    }, 0);
   }
 }

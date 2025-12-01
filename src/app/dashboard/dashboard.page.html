@@ -29,16 +29,26 @@
       <ion-card-content>
         <p style="color: var(--ion-color-medium); margin-bottom: 10px;">{{ topic.category }}</p>
 
-        <ion-list lines="none" class="subtask-list">
-          <ion-item *ngFor="let subtask of topic.subtasks" class="subtask-item">
+        <div *ngFor="let subtask of topic.subtasks" class="subtask-wrapper">
+          <ion-item lines="none" class="subtask-item">
             <ion-checkbox slot="start" [(ngModel)]="subtask.completed"
-              (ionChange)="updateProgress(topic)"></ion-checkbox>
+              (ionChange)="onSubtaskChange(topic)"></ion-checkbox>
             <ion-label class="ion-text-wrap" [style.text-decoration]="subtask.completed ? 'line-through' : 'none'"
               [style.color]="subtask.completed ? 'var(--ion-color-medium)' : 'var(--ion-color-dark)'">
               {{ subtask.title }}
             </ion-label>
+            <ion-button fill="clear" slot="end"
+              (click)="subtask.expanded = !subtask.expanded; $event.stopPropagation()">
+              <ion-icon [name]="subtask.expanded ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+            </ion-button>
           </ion-item>
-        </ion-list>
+
+          <div *ngIf="subtask.expanded" class="ion-padding-start ion-padding-end ion-padding-bottom">
+            <ion-textarea label="Notes & Resources" labelPlacement="stacked" fill="outline"
+              placeholder="Paste links or add notes here..." [(ngModel)]="subtask.notes" [autoGrow]="true"
+              rows="3"></ion-textarea>
+          </div>
+        </div>
 
         <ion-progress-bar [value]="topic.progress"></ion-progress-bar>
         <p class="ion-text-end ion-no-margin"
