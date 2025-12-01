@@ -28,10 +28,22 @@
       </ion-card-header>
       <ion-card-content>
         <p style="color: var(--ion-color-medium); margin-bottom: 10px;">{{ topic.category }}</p>
+
+        <ion-list lines="none" class="subtask-list">
+          <ion-item *ngFor="let subtask of topic.subtasks" class="subtask-item">
+            <ion-checkbox slot="start" [(ngModel)]="subtask.completed"
+              (ionChange)="updateProgress(topic)"></ion-checkbox>
+            <ion-label class="ion-text-wrap" [style.text-decoration]="subtask.completed ? 'line-through' : 'none'"
+              [style.color]="subtask.completed ? 'var(--ion-color-medium)' : 'var(--ion-color-dark)'">
+              {{ subtask.title }}
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
         <ion-progress-bar [value]="topic.progress"></ion-progress-bar>
         <p class="ion-text-end ion-no-margin"
           style="font-size: 0.8em; margin-top: 8px; font-weight: 600; color: var(--ion-color-primary);">{{
-          topic.progress * 100 }}%</p>
+          (topic.progress * 100) | number:'1.0-0' }}%</p>
       </ion-card-content>
     </ion-card>
   </ion-list>

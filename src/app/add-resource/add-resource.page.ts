@@ -14,19 +14,20 @@ import { addCircleOutline } from 'ionicons/icons';
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonTextarea, IonButton, IonList, IonIcon, CommonModule, FormsModule],
 })
 export class AddResourcePage {
-  resource = {
+  skill = {
     title: '',
     category: '',
-    description: ''
+    description: '',
+    subtasks: [] as { id: number, title: string, completed: boolean }[]
   };
 
   constructor() {
     addIcons({ addCircleOutline });
   }
 
-  saveResource() {
-    console.log('Resource saved:', this.resource);
+  saveSkill() {
+    console.log('Skill saved:', this.skill);
     // Reset form
-    this.resource = { title: '', category: '', description: '' };
+    this.skill = { title: '', category: '', description: '', subtasks: [] };
   }
 }

@@ -1,26 +1,25 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Add Resource
+      Add Skill
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="welcome-header">
-    <h1 class="gradient-text">Add New Goal 🎯</h1>
+    <h1 class="gradient-text">Add New Skill 🎯</h1>
     <p>What do you want to learn next?</p>
   </div>
 
   <ion-list lines="none">
     <ion-item>
       <ion-input label="Title" labelPlacement="floating" placeholder="e.g. React Native"
-        [(ngModel)]="resource.title"></ion-input>
+        [(ngModel)]="skill.title"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-select label="Category" labelPlacement="floating" placeholder="Select category"
-        [(ngModel)]="resource.category">
+      <ion-select label="Category" labelPlacement="floating" placeholder="Select category" [(ngModel)]="skill.category">
         <ion-select-option value="mobile">Mobile Dev</ion-select-option>
         <ion-select-option value="frontend">Frontend</ion-select-option>
         <ion-select-option value="backend">Backend</ion-select-option>
@@ -31,14 +30,14 @@
 
     <ion-item>
       <ion-textarea label="Description" labelPlacement="floating" placeholder="Add some notes or links..." rows="5"
-        [(ngModel)]="resource.description"></ion-textarea>
+        [(ngModel)]="skill.description"></ion-textarea>
     </ion-item>
   </ion-list>
 
   <div class="ion-padding-top">
-    <ion-button expand="block" (click)="saveResource()">
+    <ion-button expand="block" (click)="saveSkill()">
       <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-      Save Resource
+      Save Skill
     </ion-button>
   </div>
 </ion-content>
