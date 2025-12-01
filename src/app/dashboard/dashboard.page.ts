@@ -85,10 +85,8 @@ export class DashboardPage {
     }
   }
 
-  onSubtaskChange(topic: any) {
-    // Wait for ngModel to update
-    setTimeout(() => {
-      this.updateProgress(topic);
-    }, 0);
+  onSubtaskChange(event: any, subtask: any, topic: any) {
+    subtask.completed = event.detail.checked;
+    this.updateProgress(topic);
   }
 }

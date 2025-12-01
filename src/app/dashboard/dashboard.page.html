@@ -31,8 +31,13 @@
 
         <div *ngFor="let subtask of topic.subtasks" class="subtask-wrapper">
           <ion-item lines="none" class="subtask-item">
-            <ion-checkbox slot="start" [(ngModel)]="subtask.completed"
-              (ionChange)="onSubtaskChange(topic)"></ion-checkbox>
+
+            <!-- <ion-checkbox slot="start" [checked]="subtask.completed" (ionChange)="onSubtaskChange(topic)"></ion-checkbox> -->
+
+            <ion-checkbox slot="start" [checked]="subtask.completed"
+              (ionChange)="onSubtaskChange($event, subtask, topic)" style="--size: 24px;"></ion-checkbox>
+
+
             <ion-label class="ion-text-wrap" [style.text-decoration]="subtask.completed ? 'line-through' : 'none'"
               [style.color]="subtask.completed ? 'var(--ion-color-medium)' : 'var(--ion-color-dark)'">
               {{ subtask.title }}
