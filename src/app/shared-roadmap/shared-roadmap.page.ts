@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
+
   IonContent,
   IonIcon,
   IonButton,
   IonSpinner,
   IonBadge,
-  IonProgressBar,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -66,15 +63,11 @@ interface SharedRoadmap {
   styleUrls: ['./shared-roadmap.page.scss'],
   standalone: true,
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
     IonIcon,
     IonButton,
     IonSpinner,
     IonBadge,
-    IonProgressBar,
     CommonModule,
   ],
 })

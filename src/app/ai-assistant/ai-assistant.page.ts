@@ -5,16 +5,11 @@ import {
   IonTitle,
   IonContent,
   IonFooter,
-  IonItem,
   IonInput,
   IonButton,
   IonIcon,
   IonSpinner,
   IonChip,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
   AlertController,
   ToastController,
 } from '@ionic/angular/standalone';
@@ -100,16 +95,11 @@ interface Message {
     IonTitle,
     IonContent,
     IonFooter,
-    IonItem,
     IonInput,
     IonButton,
     IonIcon,
     IonSpinner,
     IonChip,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
     CommonModule,
     FormsModule,
   ],
@@ -355,16 +345,10 @@ export class AiAssistantPage implements OnInit, AfterViewChecked {
     );
 
     // Bold text
-    formatted = formatted.replace(
-      /\*\*([^*]+)\*\*/g,
-      '<strong>$1</strong>'
-    );
+    formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
     // Italic text
-    formatted = formatted.replace(
-      /\*([^*]+)\*/g,
-      '<em>$1</em>'
-    );
+    formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
     // Line breaks
     formatted = formatted.replace(/\n/g, '<br>');
@@ -650,7 +634,9 @@ export class AiAssistantPage implements OnInit, AfterViewChecked {
       return this.sanitizer.bypassSecurityTrustHtml(highlighted);
     } catch (e) {
       console.warn('Failed to highlight code:', e);
-      return this.sanitizer.bypassSecurityTrustHtml(this.escapeHtml(block.code));
+      return this.sanitizer.bypassSecurityTrustHtml(
+        this.escapeHtml(block.code)
+      );
     }
   }
 
