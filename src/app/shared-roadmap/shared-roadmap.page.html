@@ -1,0 +1,178 @@
+<ion-content [fullscreen]="true">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Loading roadmap...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && error" class="error-container">
+    <div class="error-content">
+      <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+      <h2>Oops!</h2>
+      <p>{{ error }}</p>
+      <ion-button fill="outline" href="/">
+        Go to LearnStream
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Roadmap Content -->
+  <div *ngIf="!isLoading && !error && roadmap" class="roadmap-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-badge">
+        <ion-icon name="school-outline"></ion-icon>
+        <span>LearnStream Roadmap</span>
+      </div>
+      
+      <h1>{{ roadmap.title }}</h1>
+      
+      <div class="hero-meta">
+        <ion-badge color="primary">{{ getCategoryLabel(roadmap.category) }}</ion-badge>
+        <span *ngIf="roadmap.learningGoal" class="goal-tag">
+          🎯 {{ getGoalLabel(roadmap.learningGoal) }}
+        </span>
+      </div>
+
+      <p *ngIf="roadmap.description" class="hero-description">
+        {{ roadmap.description }}
+      </p>
+
+      <!-- Stats Cards -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ roadmap.totalSteps }}</span>
+            <span class="stat-label">Steps</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ getTotalHours() }}</span>
+            <span class="stat-label">Hours</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔗</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ getTotalResources() }}</span>
+            <span class="stat-label">Resources</span>
+          </div>
+        </div>
+        <div class="stat-card" *ngIf="roadmap.completedSteps > 0">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ (getProgress() * 100) | number:'1.0-0' }}%</span>
+            <span class="stat-label">Complete</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Level Journey -->
+      <div class="level-journey" *ngIf="roadmap.currentSkillLevel && roadmap.targetSkillLevel">
+        <div class="level-badge from">
+          <span class="level-label">From</span>
+          <span class="level-value">{{ getLevelLabel(roadmap.currentSkillLevel) }}</span>
+        </div>
+        <div class="journey-arrow">→</div>
+        <div class="level-badge to">
+          <span class="level-label">To</span>
+          <span class="level-value">{{ getLevelLabel(roadmap.targetSkillLevel) }}</span>
+        </div>
+      </div>
+
+      <!-- Share Actions -->
+      <div class="share-actions">
+        <ion-button fill="outline" size="small" (click)="copyLink()">
+          <ion-icon slot="start" [name]="linkCopied ? 'checkmark-circle' : 'copy-outline'"></ion-icon>
+          {{ linkCopied ? 'Copied!' : 'Copy Link' }}
+        </ion-button>
+        <ion-button fill="outline" size="small" (click)="shareToTwitter()">
+          <ion-icon slot="start" name="logo-twitter"></ion-icon>
+          Tweet
+        </ion-button>
+        <ion-button fill="outline" size="small" (click)="shareToLinkedIn()">
+          <ion-icon slot="start" name="logo-linkedin"></ion-icon>
+          Share
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Learning Path Section -->
+    <div class="learning-path-section">
+      <h2>Learning Path</h2>
+      
+      <div class="timeline">
+        <div 
+          *ngFor="let step of roadmap.learningPath; let i = index; let last = last"
+          class="timeline-item"
+          [class.completed]="step.completed"
+        >
+          <!-- Timeline Node -->
+          <div class="timeline-node">
+            <div class="node-circle" [class.completed]="step.completed">
+              <ion-icon *ngIf="step.completed" name="checkmark-circle"></ion-icon>
+              <span *ngIf="!step.completed">{{ i + 1 }}</span>
+            </div>
+            <div *ngIf="!last" class="node-line" [class.completed]="step.completed"></div>
+          </div>
+
+          <!-- Step Content -->
+          <div class="step-card">
+            <div class="step-header">
+              <h3>{{ step.title }}</h3>
+              <span *ngIf="step.estimatedTime" class="time-badge">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ step.estimatedTime }}
+              </span>
+            </div>
+
+            <p *ngIf="step.description" class="step-description">
+              {{ step.description }}
+            </p>
+
+            <!-- Resources -->
+            <div *ngIf="step.resources && step.resources.length > 0" class="resources-section">
+              <h4>
+                <ion-icon name="book-outline"></ion-icon>
+                Resources
+                <ion-badge color="primary">{{ step.resources.length }}</ion-badge>
+              </h4>
+              <div class="resources-list">
+                <div 
+                  *ngFor="let resource of step.resources"
+                  class="resource-item"
+                  (click)="openResource(resource.url)"
+                >
+                  <div class="resource-icon" [attr.data-type]="resource.type">
+                    <ion-icon [name]="getResourceIcon(resource.type)"></ion-icon>
+                  </div>
+                  <div class="resource-info">
+                    <span class="resource-title">{{ resource.title }}</span>
+                    <span class="resource-type">{{ resource.type }}</span>
+                  </div>
+                  <ion-icon name="open-outline" class="open-icon"></ion-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer CTA -->
+    <div class="footer-cta">
+      <div class="cta-content">
+        <ion-icon name="rocket-outline"></ion-icon>
+        <h3>Create Your Own Learning Roadmap</h3>
+        <p>Get AI-powered personalized learning paths with curated resources</p>
+        <ion-button href="/" color="light">
+          Try LearnStream Free
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>
