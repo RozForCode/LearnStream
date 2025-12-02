@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "io.ionic.starter.app-mergeDebugResources-33:/values-af/values-af.xml",
+            "outputFile": "io.ionic.starter.app-mergeDebugResources-26:/values-af/values-af.xml",
             "map": [
                 {
                     "source": "C:\\Users\\navro\\.gradle\\caches\\8.11.1\\transforms\\ce7a7439fda0c36e77102a7d38ff3226\\transformed\\browser-1.8.0\\res\\values-af\\values-af.xml",

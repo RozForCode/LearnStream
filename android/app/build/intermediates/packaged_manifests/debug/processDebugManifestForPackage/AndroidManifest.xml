@@ -5,38 +5,20 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="26"
+        android:minSdkVersion="23"
         android:targetSdkVersion="35" />
 
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE" /> <!-- Permissions for webcam websites and such, for WebView -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- Permissions for websites that request location (e.g. Google Maps), for WebView -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <queries>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-
-            <category android:name="android.intent.category.BROWSABLE" />
-
-            <data android:scheme="http" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-
-            <category android:name="android.intent.category.BROWSABLE" />
-
-            <data android:scheme="https" />
-        </intent>
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
     </queries>
+
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <permission
         android:name="io.ionic.starter.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
@@ -80,28 +62,11 @@
         </provider>
 
         <activity
-            android:name="com.outsystems.plugins.inappbrowser.osinappbrowserlib.views.OSIABWebViewActivity"
-            android:configChanges="orientation|screenSize|uiMode"
-            android:enableOnBackInvokedCallback="true"
-            android:exported="false"
-            android:label="OSIABWebViewActivity"
-            android:theme="@style/AppTheme.WebView" />
-        <activity
-            android:name="com.outsystems.plugins.inappbrowser.osinappbrowserlib.views.OSIABCustomTabsControllerActivity"
-            android:excludeFromRecents="true"
+            android:name="com.capacitorjs.plugins.browser.BrowserControllerActivity"
             android:exported="false"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.Transparent"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" /> <!-- Used for when taking photos/videos when uploading files through WebChromeClient.onShowFileChooser -->
-        <provider
-            android:name="com.outsystems.plugins.inappbrowser.osinappbrowserlib.FileProvider"
-            android:authorities="io.ionic.starter.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true" >
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="io.ionic.starter.androidx-startup"

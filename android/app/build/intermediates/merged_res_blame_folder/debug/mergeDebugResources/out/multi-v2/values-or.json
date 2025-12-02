@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "io.ionic.starter.app-mergeDebugResources-33:/values-or/values-or.xml",
+            "outputFile": "io.ionic.starter.app-mergeDebugResources-26:/values-or/values-or.xml",
             "map": [
                 {
                     "source": "C:\\Users\\navro\\.gradle\\caches\\8.11.1\\transforms\\5f51ed623ec66baebfa6a053fe8a8b2a\\transformed\\core-1.15.0\\res\\values-or\\values-or.xml",
