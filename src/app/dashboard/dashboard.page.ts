@@ -1,16 +1,73 @@
-import { Component, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonCheckbox, IonTextarea, IonButton, IonIcon, IonSpinner } from '@ionic/angular/standalone';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonBadge,
+  IonProgressBar,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonItem,
+  IonLabel,
+  IonCheckbox,
+  IonTextarea,
+  IonButton,
+  IonIcon,
+  IonSpinner,
+  IonChip,
+  IonSkeletonText,
+} from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
-import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
+import {
+  chevronDownOutline,
+  chevronUpOutline,
+  addCircleOutline,
+  rocketOutline,
+  bookOutline,
+  videocamOutline,
+  logoGithub,
+  documentTextOutline,
+  linkOutline,
+  constructOutline,
+  timeOutline,
+  openOutline,
+  refreshOutline,
+  checkmarkCircleOutline,
+  alertCircleOutline,
+} from 'ionicons/icons';
+import { Browser } from '@capacitor/browser';
+
+type ResourcesStatus = 'pending' | 'loading' | 'ready' | 'failed';
+
+interface ResourceLink {
+  title: string;
+  url: string;
+  type:
+    | 'documentation'
+    | 'tutorial'
+    | 'video'
+    | 'course'
+    | 'article'
+    | 'github'
+    | 'tool'
+    | 'other';
+}
 
 interface LearningStep {
   _id: string;
   title: string;
   completed: boolean;
-  notes: string;
-  resources: string;
+  description: string;
+  estimatedTime: string;
+  resources: ResourceLink[];
+  resourcesStatus: ResourcesStatus;
   expanded?: boolean;
 }
 
@@ -23,9 +80,11 @@ interface LearningTopic {
   learningGoal?: string;
   targetSkillLevel?: string;
   learningPath: LearningStep[];
+  resourcesStatus: ResourcesStatus;
   progress: number;
   status: string;
   subtasks: LearningStep[];
+  expanded?: boolean;
 }
 
 @Component({
@@ -33,24 +92,77 @@ interface LearningTopic {
   templateUrl: 'dashboard.page.html',
   styleUrls: ['dashboard.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCheckbox, IonTextarea, IonButton, IonIcon, IonSpinner, CommonModule, FormsModule],
+  imports: [
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonProgressBar,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonCheckbox,
+    IonTextarea,
+    IonButton,
+    IonIcon,
+    IonSpinner,
+    IonChip,
+    IonSkeletonText,
+    CommonModule,
+    FormsModule,
+  ],
 })
-export class DashboardPage implements OnInit {
+export class DashboardPage implements OnInit, OnDestroy {
   learningTopics: LearningTopic[] = [];
   isLoading = true;
+  private pollingIntervals: Map<string, any> = new Map();
 
   private readonly API_URL = 'http://localhost:3000/api/resources';
+  private readonly POLLING_INTERVAL = 3000; // 3 seconds
 
-  constructor() {
-    addIcons({ chevronDownOutline, chevronUpOutline });
+  constructor(private router: Router) {
+    addIcons({
+      chevronDownOutline,
+      chevronUpOutline,
+      addCircleOutline,
+      rocketOutline,
+      bookOutline,
+      videocamOutline,
+      logoGithub,
+      documentTextOutline,
+      linkOutline,
+      constructOutline,
+      timeOutline,
+      openOutline,
+      refreshOutline,
+      checkmarkCircleOutline,
+      alertCircleOutline,
+    });
   }
 
   ngOnInit() {
     this.fetchResources();
   }
 
+  ngOnDestroy() {
+    // Clear all polling intervals
+    this.pollingIntervals.forEach((interval) => clearInterval(interval));
+    this.pollingIntervals.clear();
+  }
+
   ionViewWillEnter() {
     this.fetchResources();
+  }
+
+  ionViewWillLeave() {
+    // Clear polling when leaving
+    this.pollingIntervals.forEach((interval) => clearInterval(interval));
+    this.pollingIntervals.clear();
   }
 
   async fetchResources() {
@@ -73,12 +185,141 @@ export class DashboardPage implements OnInit {
           subtasks,
           progress,
           status,
+          expanded: true,
         };
+      });
+
+      // Start polling for resources that are still loading
+      this.learningTopics.forEach((topic) => {
+        if (
+          topic.resourcesStatus === 'pending' ||
+          topic.resourcesStatus === 'loading'
+        ) {
+          this.startPolling(topic._id);
+        }
       });
     } catch (error) {
       console.error('Error fetching resources:', error);
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  startPolling(resourceId: string) {
+    // Don't start duplicate polling
+    if (this.pollingIntervals.has(resourceId)) {
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch(`${this.API_URL}/${resourceId}/status`);
+        const statusData = await response.json();
+
+        // Update the topic in our list
+        const topicIndex = this.learningTopics.findIndex(
+          (t) => t._id === resourceId
+        );
+        if (topicIndex !== -1) {
+          const topic = this.learningTopics[topicIndex];
+          topic.resourcesStatus = statusData.resourcesStatus;
+
+          // Update each step's status
+          statusData.steps.forEach((stepStatus: any) => {
+            const step = topic.subtasks.find((s) => s._id === stepStatus._id);
+            if (step) {
+              step.resourcesStatus = stepStatus.resourcesStatus;
+            }
+          });
+
+          // If all done, stop polling and refresh full data
+          if (
+            statusData.resourcesStatus === 'ready' ||
+            statusData.resourcesStatus === 'failed'
+          ) {
+            this.stopPolling(resourceId);
+            // Fetch full resource data to get the actual resources
+            await this.refreshSingleResource(resourceId);
+          }
+        }
+      } catch (error) {
+        console.error('Polling error:', error);
+      }
+    }, this.POLLING_INTERVAL);
+
+    this.pollingIntervals.set(resourceId, interval);
+  }
+
+  stopPolling(resourceId: string) {
+    const interval = this.pollingIntervals.get(resourceId);
+    if (interval) {
+      clearInterval(interval);
+      this.pollingIntervals.delete(resourceId);
+    }
+  }
+
+  async refreshSingleResource(resourceId: string) {
+    try {
+      const response = await fetch(`${this.API_URL}/${resourceId}`);
+      const resource = await response.json();
+
+      const topicIndex = this.learningTopics.findIndex(
+        (t) => t._id === resourceId
+      );
+      if (topicIndex !== -1) {
+        const subtasks = (resource.learningPath || []).map((step: any) => ({
+          ...step,
+          expanded:
+            this.learningTopics[topicIndex].subtasks.find(
+              (s) => s._id === step._id
+            )?.expanded || false,
+        }));
+
+        const progress = this.calculateProgress(subtasks);
+        const status = this.calculateStatus(progress);
+
+        this.learningTopics[topicIndex] = {
+          ...resource,
+          subtasks,
+          progress,
+          status,
+          expanded: this.learningTopics[topicIndex].expanded,
+        };
+      }
+    } catch (error) {
+      console.error('Error refreshing resource:', error);
+    }
+  }
+
+  async retryResourceGathering(topic: LearningTopic) {
+    try {
+      await fetch(`${this.API_URL}/${topic._id}/retry-resources`, {
+        method: 'POST',
+      });
+      topic.resourcesStatus = 'loading';
+      topic.subtasks.forEach((s) => (s.resourcesStatus = 'pending'));
+      this.startPolling(topic._id);
+    } catch (error) {
+      console.error('Error retrying resource gathering:', error);
+    }
+  }
+
+  async regenerateResources(topic: LearningTopic) {
+    try {
+      // Clear existing resources and reset status
+      topic.resourcesStatus = 'loading';
+      topic.subtasks.forEach((s) => {
+        s.resourcesStatus = 'pending';
+        s.resources = [];
+      });
+
+      await fetch(`${this.API_URL}/${topic._id}/retry-resources`, {
+        method: 'POST',
+      });
+
+      this.startPolling(topic._id);
+    } catch (error) {
+      console.error('Error regenerating resources:', error);
     }
   }
 
@@ -99,7 +340,11 @@ export class DashboardPage implements OnInit {
     topic.status = this.calculateStatus(topic.progress);
   }
 
-  async onSubtaskChange(event: any, subtask: LearningStep, topic: LearningTopic) {
+  async onSubtaskChange(
+    event: any,
+    subtask: LearningStep,
+    topic: LearningTopic
+  ) {
     subtask.completed = event.detail.checked;
     this.updateProgress(topic);
 
@@ -124,5 +369,67 @@ export class DashboardPage implements OnInit {
       ai: 'AI',
     };
     return labels[category] || category;
+  }
+
+  getResourceIcon(type: string): string {
+    const icons: Record<string, string> = {
+      documentation: 'book-outline',
+      tutorial: 'document-text-outline',
+      video: 'videocam-outline',
+      course: 'book-outline',
+      article: 'document-text-outline',
+      github: 'logo-github',
+      tool: 'construct-outline',
+      other: 'link-outline',
+    };
+    return icons[type] || 'link-outline';
+  }
+
+  getResourceColor(type: string): string {
+    const colors: Record<string, string> = {
+      documentation: 'primary',
+      tutorial: 'secondary',
+      video: 'danger',
+      course: 'tertiary',
+      article: 'warning',
+      github: 'dark',
+      tool: 'success',
+      other: 'medium',
+    };
+    return colors[type] || 'medium';
+  }
+
+  async openResource(url: string) {
+    try {
+      await Browser.open({ url });
+    } catch (error) {
+      // Fallback for web
+      window.open(url, '_blank');
+    }
+  }
+
+  navigateToAddSkill() {
+    this.router.navigate(['/tabs/add-resource']);
+  }
+
+  getCompletedSteps(topic: LearningTopic): number {
+    return topic.subtasks.filter((s) => s.completed).length;
+  }
+
+  isResourcesLoading(step: LearningStep): boolean {
+    return (
+      step.resourcesStatus === 'pending' || step.resourcesStatus === 'loading'
+    );
+  }
+
+  getResourcesLoadingCount(topic: LearningTopic): number {
+    return topic.subtasks.filter((s) => this.isResourcesLoading(s)).length;
+  }
+
+  getTotalResourceCount(topic: LearningTopic): number {
+    return topic.subtasks.reduce(
+      (sum, s) => sum + (s.resources?.length || 0),
+      0
+    );
   }
 }
