@@ -10,11 +10,11 @@
 <ion-content #chatContent [fullscreen]="true" class="chat-content">
   <!-- Welcome Header (only show when few messages) -->
   <div *ngIf="messages.length <= 1" class="welcome-section">
-    <div class="ai-avatar">
+    <div class="ai-avatar-large">
       <ion-icon name="sparkles"></ion-icon>
     </div>
     <h2>LearnStream AI</h2>
-    <p>Your personal learning assistant</p>
+    <p>Your personal tech learning assistant</p>
 
     <!-- Quick Actions -->
     <div class="quick-actions">
@@ -37,28 +37,157 @@
       [class.user]="msg.sender === 'user'"
       [class.ai]="msg.sender === 'ai'"
     >
+      <!-- AI Avatar -->
       <div class="message-avatar ai-avatar" *ngIf="msg.sender === 'ai'">
         <ion-icon name="sparkles"></ion-icon>
       </div>
 
+      <!-- User Avatar -->
       <div class="message-avatar user-avatar" *ngIf="msg.sender === 'user'">
         <ion-icon name="person-circle-outline"></ion-icon>
       </div>
 
-      <div class="message-bubble">
-        <!-- Loading State -->
-        <div *ngIf="msg.isLoading" class="loading-dots">
-          <span></span>
-          <span></span>
-          <span></span>
+      <div class="message-content">
+        <div class="message-bubble">
+          <!-- Loading State -->
+          <div *ngIf="msg.isLoading" class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <!-- Message Content with Parts -->
+          <ng-container *ngIf="!msg.isLoading && msg.parts">
+            <ng-container *ngFor="let part of msg.parts">
+              <!-- Text Part -->
+              <div
+                *ngIf="part.type === 'text'"
+                class="message-text"
+                [innerHTML]="part.content"
+              ></div>
+
+              <!-- Code Block Part -->
+              <div
+                *ngIf="part.type === 'code' && part.codeBlock"
+                class="code-block-wrapper"
+              >
+                <div class="code-header">
+                  <span class="code-language"
+                    >{{ part.codeBlock.language }}</span
+                  >
+                  <button
+                    class="copy-btn"
+                    (click)="copyCode(part.codeBlock.code)"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <rect
+                        x="9"
+                        y="9"
+                        width="13"
+                        height="13"
+                        rx="2"
+                        ry="2"
+                      ></rect>
+                      <path
+                        d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                      ></path>
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <pre
+                  class="code-block"
+                ><code [innerHTML]="getHighlightedCode(part.codeBlock)"></code></pre>
+              </div>
+            </ng-container>
+          </ng-container>
         </div>
 
-        <!-- Message Content -->
+        <!-- Action Card (for AI messages with actions) -->
         <div
-          *ngIf="!msg.isLoading"
-          class="message-text"
-          [innerHTML]="formatMessage(msg.text)"
-        ></div>
+          *ngIf="msg.sender === 'ai' && msg.action && !msg.isLoading"
+          class="action-card"
+          [class.executed]="msg.actionExecuted"
+        >
+          <div class="action-card-header">
+            <ion-icon [name]="getActionIcon(msg.action.type)"></ion-icon>
+            <span class="action-type">
+              {{ msg.action.type === 'create_roadmap' ? 'Create Roadmap' :
+              msg.action.type === 'extend_roadmap' ? 'Extend Roadmap' : 'Add
+              Step' }}
+            </span>
+          </div>
+
+          <p class="action-description">{{ msg.action.description }}</p>
+
+          <!-- Action details preview -->
+          <div
+            class="action-preview"
+            *ngIf="msg.action.type === 'create_roadmap'"
+          >
+            <div class="preview-item">
+              <span class="preview-label">Topic:</span>
+              <span class="preview-value">{{ msg.action.data.title }}</span>
+            </div>
+            <div class="preview-item">
+              <span class="preview-label">Category:</span>
+              <span class="preview-value">{{ msg.action.data.category }}</span>
+            </div>
+            <div class="preview-item" *ngIf="msg.action.data.learningGoal">
+              <span class="preview-label">Goal:</span>
+              <span class="preview-value"
+                >{{ msg.action.data.learningGoal }}</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="action-preview"
+            *ngIf="msg.action.type === 'extend_roadmap'"
+          >
+            <div class="preview-item">
+              <span class="preview-label">Additional Steps:</span>
+              <span class="preview-value"
+                >{{ msg.action.data.additionalSteps }}</span
+              >
+            </div>
+          </div>
+
+          <!-- Action button or result -->
+          <div class="action-footer">
+            <ion-button
+              *ngIf="!msg.actionExecuted"
+              expand="block"
+              size="small"
+              (click)="executeAction(msg)"
+              [disabled]="executingAction === msg.id"
+            >
+              <ion-spinner
+                *ngIf="executingAction === msg.id"
+                name="crescent"
+                slot="start"
+              ></ion-spinner>
+              <ion-icon
+                *ngIf="executingAction !== msg.id"
+                [name]="getActionIcon(msg.action.type)"
+                slot="start"
+              ></ion-icon>
+              {{ msg.action.label }}
+            </ion-button>
+
+            <div *ngIf="msg.actionExecuted" class="action-success">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <span>{{ msg.actionResult }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -67,7 +196,7 @@
 <ion-footer class="chat-footer">
   <div class="input-container">
     <ion-input
-      placeholder="Ask me anything..."
+      placeholder="Ask me anything about tech..."
       [(ngModel)]="newMessage"
       (keyup.enter)="sendMessage()"
       [disabled]="isLoading"

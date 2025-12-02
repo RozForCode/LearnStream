@@ -10,7 +10,7 @@
   padding: 40px 20px;
   text-align: center;
 
-  .ai-avatar {
+  .ai-avatar-large {
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -51,7 +51,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
-  max-width: 320px;
+  max-width: 360px;
 
   .action-chip {
     --background: white;
@@ -90,6 +90,11 @@
   &.user {
     justify-content: flex-end;
 
+    .message-content {
+      order: 1;
+      align-items: flex-end;
+    }
+
     .message-bubble {
       background: linear-gradient(
         135deg,
@@ -98,19 +103,18 @@
       );
       color: white;
       border-radius: 20px 20px 4px 20px;
-      order: 1;
 
       .message-text {
         color: white;
 
-        :global(code.inline-code) {
+        code.inline-code {
           background: rgba(255, 255, 255, 0.2);
           color: white;
         }
+      }
 
-        :global(pre.code-block) {
-          background: rgba(0, 0, 0, 0.2);
-        }
+      .code-block-wrapper {
+        background: rgba(0, 0, 0, 0.3);
       }
     }
 
@@ -122,12 +126,23 @@
   &.ai {
     justify-content: flex-start;
 
+    .message-content {
+      align-items: flex-start;
+    }
+
     .message-bubble {
       background: white;
       border-radius: 20px 20px 20px 4px;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     }
   }
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 80%;
 }
 
 .message-avatar {
@@ -155,7 +170,6 @@
 }
 
 .message-bubble {
-  max-width: 80%;
   padding: 12px 16px;
   position: relative;
 }
@@ -166,33 +180,300 @@
   color: var(--ion-color-dark);
   word-wrap: break-word;
 
-  :global(strong) {
+  strong {
     font-weight: 600;
   }
 
-  :global(code.inline-code) {
-    background: var(--ion-color-light);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: "Fira Code", "Consolas", monospace;
-    font-size: 13px;
+  em {
+    font-style: italic;
   }
 
-  :global(pre.code-block) {
-    background: #1e1e1e;
-    color: #d4d4d4;
-    padding: 12px;
-    border-radius: 8px;
+  code.inline-code {
+    background: #f1f5f9;
+    color: #e11d48;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+// Links in chat messages - using ::ng-deep for dynamically injected HTML
+:host ::ng-deep .chat-link {
+  color: var(--ion-color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  word-break: break-all;
+  transition: all 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--ion-color-primary-shade);
+  }
+
+  &:visited {
+    color: var(--ion-color-primary-tint);
+  }
+}
+
+// Code block wrapper with header - using ::ng-deep to pierce view encapsulation
+// for dynamically injected HTML via innerHTML
+:host ::ng-deep .code-block-wrapper {
+  margin: 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #1e1e2e !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: #313244 !important;
+    border-bottom: 1px solid #45475a;
+
+    .code-language {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #a6adc8;
+      letter-spacing: 0.5px;
+    }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: transparent;
+      border: 1px solid #45475a;
+      border-radius: 6px;
+      color: #a6adc8;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #45475a;
+        color: #cdd6f4;
+        border-color: #585b70;
+      }
+
+      svg {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+
+  pre.code-block {
+    margin: 0;
+    padding: 16px;
+    background: #1e1e2e !important;
     overflow-x: auto;
-    margin: 8px 0;
-    font-family: "Fira Code", "Consolas", monospace;
-    font-size: 12px;
-    line-height: 1.5;
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    tab-size: 2;
 
     code {
-      color: inherit;
-      background: none;
+      color: #cdd6f4 !important;
+      background: none !important;
       padding: 0;
+      font-family: inherit;
+      font-size: inherit;
+      white-space: pre;
+    }
+  }
+
+  // Prism.js Catppuccin Mocha Theme
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    color: #6c7086 !important;
+    font-style: italic;
+  }
+
+  .token.punctuation {
+    color: #9399b2 !important;
+  }
+
+  .token.namespace {
+    opacity: 0.7;
+  }
+
+  .token.property,
+  .token.tag,
+  .token.boolean,
+  .token.number,
+  .token.constant,
+  .token.symbol,
+  .token.deleted {
+    color: #fab387 !important;
+  }
+
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+    color: #a6e3a1 !important;
+  }
+
+  .token.operator,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .style .token.string {
+    color: #89dceb !important;
+  }
+
+  .token.atrule,
+  .token.attr-value,
+  .token.keyword {
+    color: #cba6f7 !important;
+  }
+
+  .token.function,
+  .token.class-name {
+    color: #89b4fa !important;
+  }
+
+  .token.regex,
+  .token.important,
+  .token.variable {
+    color: #f9e2af !important;
+  }
+
+  .token.important,
+  .token.bold {
+    font-weight: bold;
+  }
+
+  .token.italic {
+    font-style: italic;
+  }
+
+  .token.entity {
+    cursor: help;
+  }
+}
+
+// Action Card Styles
+.action-card {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.2);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 4px;
+  transition: all 0.3s ease;
+
+  &.executed {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-color: rgba(34, 197, 94, 0.3);
+  }
+
+  .action-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+
+    ion-icon {
+      font-size: 20px;
+      color: var(--ion-color-primary);
+    }
+
+    .action-type {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ion-color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .action-description {
+    font-size: 13px;
+    color: var(--ion-color-dark);
+    margin: 0 0 12px 0;
+    line-height: 1.5;
+  }
+
+  .action-preview {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+
+    .preview-item {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .preview-label {
+        color: var(--ion-color-medium);
+        font-weight: 500;
+        min-width: 70px;
+      }
+
+      .preview-value {
+        color: var(--ion-color-dark);
+        font-weight: 600;
+      }
+    }
+  }
+
+  .action-footer {
+    ion-button {
+      --background: var(--ion-color-primary);
+      --background-hover: var(--ion-color-primary-shade);
+      --border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      height: 40px;
+      margin: 0;
+
+      ion-icon {
+        margin-right: 6px;
+      }
+
+      ion-spinner {
+        width: 18px;
+        height: 18px;
+        margin-right: 6px;
+      }
+    }
+
+    .action-success {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(34, 197, 94, 0.1);
+      border-radius: 8px;
+      color: #16a34a;
+
+      ion-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      span {
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.4;
+      }
     }
   }
 }
@@ -276,13 +557,48 @@
 
 // Responsive adjustments
 @media (max-width: 400px) {
-  .message-bubble {
+  .message-content {
     max-width: 85%;
   }
 
   .quick-actions {
     .action-chip {
       font-size: 11px;
+    }
+  }
+
+  .action-card {
+    padding: 12px;
+
+    .action-preview {
+      .preview-item {
+        flex-direction: column;
+        gap: 2px;
+
+        .preview-label {
+          min-width: auto;
+        }
+      }
+    }
+  }
+
+  :host ::ng-deep .code-block-wrapper {
+    .code-header {
+      padding: 6px 10px;
+
+      .code-language {
+        font-size: 10px;
+      }
+
+      .copy-btn {
+        padding: 3px 8px;
+        font-size: 10px;
+      }
+    }
+
+    pre.code-block {
+      padding: 12px;
+      font-size: 12px;
     }
   }
 }

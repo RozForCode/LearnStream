@@ -1,54 +1,241 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Add Skill </ion-title>
+    <ion-title>Add Skill</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="welcome-header">
     <h1 class="gradient-text">Add New Skill 🎯</h1>
-    <p>What do you want to learn next?</p>
+    <p>Let's create your personalized learning roadmap</p>
   </div>
 
-  <ion-list lines="none">
-    <ion-item>
-      <ion-input
-        label="Title"
-        labelPlacement="floating"
-        placeholder="e.g. React Native"
-        [(ngModel)]="skill.title"
-      ></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-select
-        label="Category"
-        labelPlacement="floating"
-        placeholder="Select category"
-        [(ngModel)]="skill.category"
+  <!-- Step Indicator -->
+  <div class="step-indicator">
+    <div
+      class="step"
+      [class.active]="currentStep >= 1"
+      [class.completed]="currentStep > 1"
+    >
+      <span class="step-number">1</span>
+      <span class="step-label">Basics</span>
+    </div>
+    <div class="step-line" [class.completed]="currentStep > 1"></div>
+    <div
+      class="step"
+      [class.active]="currentStep >= 2"
+      [class.completed]="currentStep > 2"
+    >
+      <span class="step-number">2</span>
+      <span class="step-label">Level</span>
+    </div>
+    <div class="step-line" [class.completed]="currentStep > 2"></div>
+    <div class="step" [class.active]="currentStep >= 3">
+      <span class="step-number">3</span>
+      <span class="step-label">Goals</span>
+    </div>
+  </div>
+
+  <!-- Step 1: Basic Info -->
+  <div class="form-step" *ngIf="currentStep === 1">
+    <div class="step-title">
+      <h2>What do you want to learn?</h2>
+      <p>Tell us about the skill or technology</p>
+    </div>
+
+    <ion-list lines="none">
+      <ion-item>
+        <ion-input
+          label="Skill / Technology"
+          labelPlacement="floating"
+          placeholder="e.g. React Native, Machine Learning, Docker"
+          [(ngModel)]="skill.title"
+        ></ion-input>
+      </ion-item>
+
+      <div class="category-section">
+        <label class="section-label">Category</label>
+        <div class="category-chips">
+          <ion-chip
+            *ngFor="let cat of categories"
+            [color]="skill.category === cat.value ? 'primary' : 'medium'"
+            [outline]="skill.category !== cat.value"
+            (click)="skill.category = cat.value"
+          >
+            <ion-icon [name]="cat.icon"></ion-icon>
+            <ion-label>{{ cat.label }}</ion-label>
+          </ion-chip>
+        </div>
+      </div>
+
+      <ion-item class="description-item">
+        <ion-textarea
+          label="Additional Context (Optional)"
+          labelPlacement="floating"
+          placeholder="Any specific topics, frameworks, or areas you want to focus on..."
+          rows="3"
+          [(ngModel)]="skill.description"
+        ></ion-textarea>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Step 2: Skill Level -->
+  <div class="form-step" *ngIf="currentStep === 2">
+    <div class="step-title">
+      <h2>Where are you now?</h2>
+      <p>This helps us tailor the learning path for you</p>
+    </div>
+
+    <div class="level-section">
+      <label class="section-label">Your Current Level</label>
+      <div class="level-cards">
+        <div
+          *ngFor="let level of skillLevels"
+          class="level-card"
+          [class.selected]="skill.currentSkillLevel === level.value"
+          (click)="skill.currentSkillLevel = level.value"
+        >
+          <div class="level-icon">{{ level.emoji }}</div>
+          <div class="level-info">
+            <h4>{{ level.label }}</h4>
+            <p>{{ level.description }}</p>
+          </div>
+          <ion-icon
+            *ngIf="skill.currentSkillLevel === level.value"
+            name="checkmark-circle"
+            color="primary"
+          ></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="level-section target-level">
+      <label class="section-label">Target Level</label>
+      <div class="level-cards">
+        <div
+          *ngFor="let level of targetLevels"
+          class="level-card"
+          [class.selected]="skill.targetSkillLevel === level.value"
+          [class.disabled]="isTargetDisabled(level.value)"
+          (click)="!isTargetDisabled(level.value) && (skill.targetSkillLevel = level.value)"
+        >
+          <div class="level-icon">{{ level.emoji }}</div>
+          <div class="level-info">
+            <h4>{{ level.label }}</h4>
+            <p>{{ level.description }}</p>
+          </div>
+          <ion-icon
+            *ngIf="skill.targetSkillLevel === level.value"
+            name="checkmark-circle"
+            color="primary"
+          ></ion-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Learning Goals -->
+  <div class="form-step" *ngIf="currentStep === 3">
+    <div class="step-title">
+      <h2>What's your goal?</h2>
+      <p>Choose what you want to achieve</p>
+    </div>
+
+    <div class="goals-section">
+      <div
+        *ngFor="let goal of learningGoals"
+        class="goal-card"
+        [class.selected]="skill.learningGoal === goal.value"
+        (click)="skill.learningGoal = goal.value"
       >
-        <ion-select-option value="mobile">Mobile Dev</ion-select-option>
-        <ion-select-option value="frontend">Frontend</ion-select-option>
-        <ion-select-option value="backend">Backend</ion-select-option>
-        <ion-select-option value="design">Design</ion-select-option>
-        <ion-select-option value="ai">AI</ion-select-option>
-      </ion-select>
-    </ion-item>
+        <div class="goal-icon">{{ goal.emoji }}</div>
+        <div class="goal-info">
+          <h4>{{ goal.label }}</h4>
+          <p>{{ goal.description }}</p>
+        </div>
+        <ion-icon
+          *ngIf="skill.learningGoal === goal.value"
+          name="checkmark-circle"
+          color="primary"
+        ></ion-icon>
+      </div>
+    </div>
 
-    <ion-item>
-      <ion-textarea
-        label="Description"
-        labelPlacement="floating"
-        placeholder="Add some notes or links..."
-        rows="5"
-        [(ngModel)]="skill.description"
-      ></ion-textarea>
-    </ion-item>
-  </ion-list>
+    <div class="time-section">
+      <label class="section-label">How much time can you dedicate?</label>
+      <div class="time-options">
+        <ion-chip
+          *ngFor="let time of timeCommitments"
+          [color]="skill.timeCommitment === time.value ? 'primary' : 'medium'"
+          [outline]="skill.timeCommitment !== time.value"
+          (click)="skill.timeCommitment = time.value"
+        >
+          <ion-icon name="time-outline"></ion-icon>
+          <ion-label>{{ time.label }}</ion-label>
+        </ion-chip>
+      </div>
+    </div>
 
-  <div class="ion-padding-top">
-    <ion-button expand="block" (click)="saveSkill()">
-      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-      Save Skill
+    <div class="preference-section">
+      <label class="section-label">Learning Style Preference</label>
+      <div class="preference-options">
+        <ion-chip
+          *ngFor="let pref of learningPreferences"
+          [color]="skill.learningPreference === pref.value ? 'primary' : 'medium'"
+          [outline]="skill.learningPreference !== pref.value"
+          (click)="skill.learningPreference = pref.value"
+        >
+          <ion-icon [name]="pref.icon"></ion-icon>
+          <ion-label>{{ pref.label }}</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Preview (on final step) -->
+  <div
+    class="summary-preview"
+    *ngIf="currentStep === 3 && skill.title && skill.category"
+  >
+    <div class="summary-header">
+      <ion-icon name="sparkles-outline"></ion-icon>
+      <span>AI will generate a personalized roadmap for:</span>
+    </div>
+    <div class="summary-content">
+      <strong>{{ skill.title }}</strong>
+      <span class="summary-meta">
+        {{ getCategoryLabel(skill.category) }} • {{
+        getLevelLabel(skill.currentSkillLevel) }} → {{
+        getLevelLabel(skill.targetSkillLevel) }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="form-navigation">
+    <ion-button *ngIf="currentStep > 1" fill="outline" (click)="previousStep()">
+      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+      Back
+    </ion-button>
+
+    <ion-button
+      *ngIf="currentStep < 3"
+      [disabled]="!canProceed()"
+      (click)="nextStep()"
+    >
+      Next
+      <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+    </ion-button>
+
+    <ion-button
+      *ngIf="currentStep === 3"
+      [disabled]="!canSubmit()"
+      (click)="saveSkill()"
+      class="submit-button"
+    >
+      <ion-icon slot="start" name="rocket-outline"></ion-icon>
+      Generate Roadmap
     </ion-button>
   </div>
 </ion-content>

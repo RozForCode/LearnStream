@@ -5,9 +5,57 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Streak Celebration Overlay -->
+  <div *ngIf="showStreakCelebration" class="streak-celebration">
+    <div class="celebration-content">
+      <div class="flame-icon">🔥</div>
+      <h2>Amazing Streak!</h2>
+      <p>{{ userProgress?.currentStreak }} days and counting!</p>
+    </div>
+  </div>
+
+  <!-- Welcome Header with Streak -->
   <div class="welcome-header">
-    <h1 class="gradient-text">Hello, Learner! 🚀</h1>
-    <p>Ready to crush your goals today?</p>
+    <div class="welcome-text">
+      <h1 class="gradient-text">Hello, Learner! 🚀</h1>
+      <p>Ready to crush your goals today?</p>
+    </div>
+
+    <!-- Streak Badge -->
+    <div
+      *ngIf="userProgress && userProgress.currentStreak > 0"
+      class="streak-badge"
+      (click)="triggerStreakCelebration()"
+    >
+      <ion-icon name="flame-outline"></ion-icon>
+      <span class="streak-count">{{ userProgress.currentStreak }}</span>
+      <span class="streak-label">day streak</span>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div *ngIf="userProgress && !isLoading" class="quick-stats">
+    <div class="stat-card">
+      <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+      <div class="stat-info">
+        <span class="stat-value">{{ userProgress.totalStepsCompleted }}</span>
+        <span class="stat-label">Steps Done</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <ion-icon name="trophy-outline" color="warning"></ion-icon>
+      <div class="stat-info">
+        <span class="stat-value">{{ userProgress.longestStreak }}</span>
+        <span class="stat-label">Best Streak</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <ion-icon name="create-outline" color="tertiary"></ion-icon>
+      <div class="stat-info">
+        <span class="stat-value">{{ userProgress.totalNotesAdded }}</span>
+        <span class="stat-label">Notes</span>
+      </div>
+    </div>
   </div>
 
   <!-- Loading State -->
@@ -96,6 +144,26 @@
             ></ion-icon>
           </div>
 
+          <!-- Roadmap Actions -->
+          <div class="roadmap-actions">
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="openShareModal(topic); $event.stopPropagation()"
+            >
+              <ion-icon slot="start" name="share-outline"></ion-icon>
+              Share
+            </ion-button>
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="exportToPDF(topic); $event.stopPropagation()"
+            >
+              <ion-icon slot="start" name="download-outline"></ion-icon>
+              Export
+            </ion-button>
+          </div>
+
           <!-- Progress Summary -->
           <div class="progress-summary">
             <div class="progress-stats">
@@ -149,16 +217,39 @@
                 >
                   <div class="step-info">
                     <h4>{{ step.title }}</h4>
-                    <div class="step-meta" *ngIf="step.estimatedTime">
-                      <ion-icon name="time-outline"></ion-icon>
-                      <span>{{ step.estimatedTime }}</span>
+                    <div class="step-meta">
+                      <span *ngIf="step.estimatedTime" class="time-badge">
+                        <ion-icon name="time-outline"></ion-icon>
+                        {{ step.estimatedTime }}
+                      </span>
+                      <span
+                        *ngIf="step.notes && step.notes.length > 0"
+                        class="notes-badge"
+                      >
+                        <ion-icon name="create-outline"></ion-icon>
+                        {{ step.notes.length }}
+                      </span>
                     </div>
                   </div>
-                  <ion-checkbox
-                    [checked]="step.completed"
-                    (ionChange)="onSubtaskChange($event, step, topic)"
-                    (click)="$event.stopPropagation()"
-                  ></ion-checkbox>
+                  <div class="step-actions">
+                    <!-- Bookmark Button -->
+                    <ion-button
+                      fill="clear"
+                      size="small"
+                      [color]="step.bookmarked ? 'warning' : 'medium'"
+                      (click)="toggleBookmark(topic, step); $event.stopPropagation()"
+                    >
+                      <ion-icon
+                        slot="icon-only"
+                        [name]="step.bookmarked ? 'bookmark' : 'bookmark-outline'"
+                      ></ion-icon>
+                    </ion-button>
+                    <ion-checkbox
+                      [checked]="step.completed"
+                      (ionChange)="onSubtaskChange($event, step, topic)"
+                      (click)="$event.stopPropagation()"
+                    ></ion-checkbox>
+                  </div>
                 </div>
 
                 <!-- Expanded Content -->
@@ -166,6 +257,70 @@
                   <p class="step-description" *ngIf="step.description">
                     {{ step.description }}
                   </p>
+
+                  <!-- Notes Section -->
+                  <div class="notes-section">
+                    <div
+                      class="notes-header"
+                      (click)="toggleNotes(step); $event.stopPropagation()"
+                    >
+                      <h5>
+                        <ion-icon name="create-outline"></ion-icon>
+                        Notes
+                        <ion-badge
+                          *ngIf="step.notes && step.notes.length > 0"
+                          color="tertiary"
+                        >
+                          {{ step.notes.length }}
+                        </ion-badge>
+                      </h5>
+                      <ion-icon
+                        [name]="step.showNotes ? 'chevron-up-outline' : 'chevron-down-outline'"
+                      ></ion-icon>
+                    </div>
+
+                    <div *ngIf="step.showNotes" class="notes-content">
+                      <!-- Existing Notes -->
+                      <div *ngFor="let note of step.notes" class="note-item">
+                        <p>{{ note.content }}</p>
+                        <div class="note-footer">
+                          <span class="note-date"
+                            >{{ note.createdAt | date:'short' }}</span
+                          >
+                          <ion-button
+                            fill="clear"
+                            size="small"
+                            color="danger"
+                            (click)="deleteNote(topic, step, note)"
+                          >
+                            <ion-icon
+                              slot="icon-only"
+                              name="trash-outline"
+                            ></ion-icon>
+                          </ion-button>
+                        </div>
+                      </div>
+
+                      <!-- Add Note Form -->
+                      <div class="add-note-form">
+                        <ion-textarea
+                          [(ngModel)]="step.newNoteContent"
+                          placeholder="Add a note..."
+                          [autoGrow]="true"
+                          rows="2"
+                        ></ion-textarea>
+                        <ion-button
+                          fill="solid"
+                          size="small"
+                          (click)="addNote(topic, step)"
+                          [disabled]="!step.newNoteContent || step.newNoteContent.trim().length === 0"
+                        >
+                          <ion-icon slot="start" name="add-outline"></ion-icon>
+                          Add Note
+                        </ion-button>
+                      </div>
+                    </div>
+                  </div>
 
                   <!-- Resources Loading State -->
                   <div
@@ -268,4 +423,77 @@
       </ion-item>
     </ion-item-sliding>
   </div>
+
+  <!-- Share Modal -->
+  <ion-modal [isOpen]="shareModalOpen" (didDismiss)="closeShareModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Share Roadmap</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeShareModal()">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div class="share-modal-content" *ngIf="shareModalTopic">
+          <div class="share-preview">
+            <h3>{{ shareModalTopic.title }}</h3>
+            <p>{{ shareModalTopic.learningGoal || 'Learning roadmap' }}</p>
+            <div class="share-stats">
+              <span>{{ shareModalTopic.subtasks.length }} steps</span>
+              <span>{{ getCategoryLabel(shareModalTopic.category) }}</span>
+            </div>
+          </div>
+
+          <div class="share-link-section">
+            <h4>Share Link</h4>
+            <div class="share-link-input">
+              <input type="text" [value]="shareUrl" readonly />
+              <ion-button fill="solid" (click)="copyShareLink()">
+                <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+
+          <div class="share-social-section">
+            <h4>Share on Social</h4>
+            <div class="social-buttons">
+              <ion-button
+                fill="outline"
+                color="primary"
+                (click)="shareToTwitter()"
+              >
+                <ion-icon slot="start" name="logo-twitter"></ion-icon>
+                Twitter
+              </ion-button>
+              <ion-button
+                fill="outline"
+                color="primary"
+                (click)="shareToLinkedIn()"
+              >
+                <ion-icon slot="start" name="logo-linkedin"></ion-icon>
+                LinkedIn
+              </ion-button>
+            </div>
+          </div>
+
+          <div class="share-options">
+            <ion-button
+              *ngIf="shareModalTopic.isPublic"
+              fill="clear"
+              color="danger"
+              expand="block"
+              (click)="disableSharing(shareModalTopic)"
+            >
+              <ion-icon slot="start" name="close-outline"></ion-icon>
+              Disable Sharing
+            </ion-button>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
