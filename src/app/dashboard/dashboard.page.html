@@ -15,28 +15,33 @@
   <h2 class="ion-margin-bottom ion-margin-start" style="font-weight: 600; color: var(--ion-color-dark);">My Learning
     Path</h2>
 
-  <ion-list style="background: transparent;">
+  <div *ngIf="isLoading" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading your learning paths...</p>
+  </div>
+
+  <div *ngIf="!isLoading && learningTopics.length === 0" class="ion-text-center ion-padding">
+    <p style="color: var(--ion-color-medium);">No learning paths yet. Add a new skill to get started!</p>
+  </div>
+
+  <ion-list *ngIf="!isLoading && learningTopics.length > 0" style="background: transparent;">
     <ion-card *ngFor="let topic of learningTopics" class="fun-card"
-      [ngClass]="{'completed': topic.status === 'Completed', 'started': topic.status === 'Started'}">
+      [ngClass]="{'completed': topic.status === 'Completed', 'started': topic.status === 'Not Started'}">
       <ion-card-header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <ion-card-title>{{ topic.title }}</ion-card-title>
           <ion-badge
-            [color]="topic.status === 'Completed' ? 'success' : (topic.status === 'Started' ? 'secondary' : 'primary')">{{
+            [color]="topic.status === 'Completed' ? 'success' : (topic.status === 'Not Started' ? 'medium' : 'primary')">{{
             topic.status }}</ion-badge>
         </div>
       </ion-card-header>
       <ion-card-content>
-        <p style="color: var(--ion-color-medium); margin-bottom: 10px;">{{ topic.category }}</p>
+        <p style="color: var(--ion-color-medium); margin-bottom: 10px;">{{ getCategoryLabel(topic.category) }}</p>
 
         <div *ngFor="let subtask of topic.subtasks" class="subtask-wrapper">
           <ion-item lines="none" class="subtask-item">
-
-            <!-- <ion-checkbox slot="start" [checked]="subtask.completed" (ionChange)="onSubtaskChange(topic)"></ion-checkbox> -->
-
             <ion-checkbox slot="start" [checked]="subtask.completed"
               (ionChange)="onSubtaskChange($event, subtask, topic)" style="--size: 24px;"></ion-checkbox>
-
 
             <ion-label class="ion-text-wrap" [style.text-decoration]="subtask.completed ? 'line-through' : 'none'"
               [style.color]="subtask.completed ? 'var(--ion-color-medium)' : 'var(--ion-color-dark)'">
@@ -48,10 +53,15 @@
             </ion-button>
           </ion-item>
 
-          <div *ngIf="subtask.expanded" class="ion-padding-start ion-padding-end ion-padding-bottom">
-            <ion-textarea label="Notes & Resources" labelPlacement="stacked" fill="outline"
-              placeholder="Paste links or add notes here..." [(ngModel)]="subtask.notes" [autoGrow]="true"
-              rows="3"></ion-textarea>
+          <div *ngIf="subtask.expanded" class="ion-padding-start ion-padding-end ion-padding-bottom expanded-content">
+            <div *ngIf="subtask.notes" class="step-notes">
+              <strong>Notes:</strong>
+              <p>{{ subtask.notes }}</p>
+            </div>
+            <div *ngIf="subtask.resources" class="step-resources">
+              <strong>Resources:</strong>
+              <p>{{ subtask.resources }}</p>
+            </div>
           </div>
         </div>
 

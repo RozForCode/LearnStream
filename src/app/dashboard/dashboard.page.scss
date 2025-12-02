@@ -52,3 +52,27 @@ ion-progress-bar {
     --background: #f0f0f0;
     --progress-background: linear-gradient(90deg, var(--ion-color-primary), var(--ion-color-secondary));
 }
+
+.expanded-content {
+    background: var(--ion-color-light);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+
+    .step-notes,
+    .step-resources {
+        margin-bottom: 8px;
+
+        strong {
+            color: var(--ion-color-dark);
+            font-size: 0.9em;
+        }
+
+        p {
+            margin: 4px 0 0 0;
+            color: var(--ion-color-medium);
+            font-size: 0.85em;
+        }
+    }
+}
