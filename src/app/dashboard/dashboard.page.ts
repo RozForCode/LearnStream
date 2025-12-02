@@ -98,6 +98,9 @@ interface LearningTopic {
 import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
 import { InAppSearchComponent } from '../components/in-app-search/in-app-search.component';
 import { Toast } from '@capacitor/toast';
+<<<<<<< HEAD
+>>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
+=======
 >>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
 
 @Component({
@@ -105,6 +108,7 @@ import { Toast } from '@capacitor/toast';
   templateUrl: 'dashboard.page.html',
   styleUrls: ['dashboard.page.scss'],
   standalone: true,
+<<<<<<< HEAD
 <<<<<<< HEAD
   imports: [
     IonHeader,
@@ -133,6 +137,9 @@ import { Toast } from '@capacitor/toast';
     CommonModule,
     FormsModule,
   ],
+=======
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCheckbox, IonTextarea, IonButton, IonIcon, CommonModule, FormsModule, InAppSearchComponent],
+>>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
 =======
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCheckbox, IonTextarea, IonButton, IonIcon, CommonModule, FormsModule, InAppSearchComponent],
 >>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
@@ -284,6 +291,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     }
   }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
   async refreshSingleResource(resourceId: string) {
     try {
@@ -566,12 +574,21 @@ export class DashboardPage implements OnInit, OnDestroy {
     subtask.completed = event.detail.checked;
     this.updateProgress(topic);
 
+=======
+  async onSubtaskChange(event: any, subtask: any, topic: any) {
+    subtask.completed = event.detail.checked;
+    this.updateProgress(topic);
+
+>>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
     if (subtask.completed) {
       await Toast.show({
         text: `Subtask '${subtask.title}' completed!`,
         duration: 'short',
         position: 'bottom',
       });
+<<<<<<< HEAD
+>>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
+=======
 >>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
     }
   }
