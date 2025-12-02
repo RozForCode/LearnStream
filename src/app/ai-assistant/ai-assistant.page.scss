@@ -14,7 +14,11 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+    background: linear-gradient(
+      135deg,
+      var(--ion-color-primary),
+      var(--ion-color-secondary)
+    );
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,7 +91,11 @@
     justify-content: flex-end;
 
     .message-bubble {
-      background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+      background: linear-gradient(
+        135deg,
+        var(--ion-color-primary),
+        var(--ion-color-primary-shade)
+      );
       color: white;
       border-radius: 20px 20px 4px 20px;
       order: 1;
@@ -126,7 +134,11 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+  background: linear-gradient(
+    135deg,
+    var(--ion-color-primary),
+    var(--ion-color-secondary)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,7 +174,7 @@
     background: var(--ion-color-light);
     padding: 2px 6px;
     border-radius: 4px;
-    font-family: 'Fira Code', 'Consolas', monospace;
+    font-family: "Fira Code", "Consolas", monospace;
     font-size: 13px;
   }
 
@@ -173,7 +185,7 @@
     border-radius: 8px;
     overflow-x: auto;
     margin: 8px 0;
-    font-family: 'Fira Code', 'Consolas', monospace;
+    font-family: "Fira Code", "Consolas", monospace;
     font-size: 12px;
     line-height: 1.5;
 
@@ -241,6 +253,7 @@
     --padding-end: 0;
     --background: transparent;
     font-size: 15px;
+    color: var(--ion-color-dark);
   }
 
   .send-button {

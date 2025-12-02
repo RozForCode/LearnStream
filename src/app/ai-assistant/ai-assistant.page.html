@@ -37,12 +37,10 @@
       [class.user]="msg.sender === 'user'"
       [class.ai]="msg.sender === 'ai'"
     >
-      <!-- AI Avatar (left side) -->
       <div class="message-avatar ai-avatar" *ngIf="msg.sender === 'ai'">
         <ion-icon name="sparkles"></ion-icon>
       </div>
 
-      <!-- User Avatar (left side for user messages - will be moved to right via CSS) -->
       <div class="message-avatar user-avatar" *ngIf="msg.sender === 'user'">
         <ion-icon name="person-circle-outline"></ion-icon>
       </div>
@@ -73,6 +71,7 @@
       [(ngModel)]="newMessage"
       (keyup.enter)="sendMessage()"
       [disabled]="isLoading"
+      autofocus="true"
       class="chat-input"
     ></ion-input>
     <ion-button
