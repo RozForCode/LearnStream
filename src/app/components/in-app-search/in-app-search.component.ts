@@ -56,7 +56,7 @@ export class InAppSearchComponent {
     if (!this.searchUrl) return;
 
     const query = encodeURIComponent(this.searchUrl);
-    const url = `https://www.google.com/search?q=${query}`;
+    const url = `https://www.google.com/search?q=roadmap.sh ${query}`;
 
     this.iab.openInWebView(url);
   }

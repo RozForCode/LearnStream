@@ -18,6 +18,7 @@ import {
   ToastController,
   LoadingController,
 } from '@ionic/angular/standalone';
+import { InAppSearchComponent } from '../components/in-app-search/in-app-search.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
@@ -99,6 +100,7 @@ interface LearningPreference {
     IonChip,
     CommonModule,
     FormsModule,
+    InAppSearchComponent
   ],
 })
 export class AddResourcePage {
