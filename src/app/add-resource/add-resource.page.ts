@@ -18,6 +18,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { addCircleOutline } from 'ionicons/icons';
+import { InAppSearchComponent } from '../components/in-app-search/in-app-search.component';
 
 @Component({
   selector: 'app-add-resource',

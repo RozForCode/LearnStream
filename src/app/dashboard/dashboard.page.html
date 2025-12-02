@@ -8,13 +8,20 @@
   <div class="welcome-header">
     <h1 class="gradient-text">Hello, Learner! 🚀</h1>
     <p>Ready to crush your goals today?</p>
+    <app-in-app-search initialUrl="Search here"></app-in-app-search>
   </div>
 
+<<<<<<< HEAD
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-state">
     <ion-spinner name="crescent" color="primary"></ion-spinner>
     <p>Loading your learning paths...</p>
   </div>
+=======
+
+  <h2 class="ion-margin-bottom ion-margin-start" style="font-weight: 600; color: var(--ion-color-dark);">My Learning
+    Path</h2>
+>>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
 
   <!-- Empty State -->
   <div *ngIf="!isLoading && learningTopics.length === 0" class="empty-state">
@@ -141,6 +148,7 @@
                 ></div>
               </div>
 
+<<<<<<< HEAD
               <!-- Step Content -->
               <div class="step-content" [class.completed]="step.completed">
                 <div
@@ -263,6 +271,16 @@
                 </div>
               </div>
             </div>
+=======
+          <div *ngIf="subtask.expanded" class="ion-padding-start ion-padding-end ion-padding-bottom">
+            <ion-textarea label="Notes & Resources" labelPlacement="stacked" fill="outline"
+              placeholder="Paste links or add notes here..." [(ngModel)]="subtask.notes" [autoGrow]="true"
+              rows="3"></ion-textarea>
+
+
+
+
+>>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
           </div>
         </div>
       </ion-item>

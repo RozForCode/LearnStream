@@ -29,6 +29,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
+<<<<<<< HEAD
 import {
   chevronDownOutline,
   chevronUpOutline,
@@ -93,12 +94,18 @@ interface LearningTopic {
   subtasks: LearningStep[];
   expanded?: boolean;
 }
+=======
+import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
+import { InAppSearchComponent } from '../components/in-app-search/in-app-search.component';
+import { Toast } from '@capacitor/toast';
+>>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: 'dashboard.page.html',
   styleUrls: ['dashboard.page.scss'],
   standalone: true,
+<<<<<<< HEAD
   imports: [
     IonHeader,
     IonToolbar,
@@ -126,6 +133,9 @@ interface LearningTopic {
     CommonModule,
     FormsModule,
   ],
+=======
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCheckbox, IonTextarea, IonButton, IonIcon, CommonModule, FormsModule, InAppSearchComponent],
+>>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
 })
 export class DashboardPage implements OnInit, OnDestroy {
   learningTopics: LearningTopic[] = [];
@@ -274,6 +284,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     }
   }
 
+<<<<<<< HEAD
   async refreshSingleResource(resourceId: string) {
     try {
       const response = await fetch(`${this.API_URL}/${resourceId}`);
@@ -550,6 +561,18 @@ export class DashboardPage implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error extending roadmap:', error);
       topic.resourcesStatus = 'ready';
+=======
+  async onSubtaskChange(event: any, subtask: any, topic: any) {
+    subtask.completed = event.detail.checked;
+    this.updateProgress(topic);
+
+    if (subtask.completed) {
+      await Toast.show({
+        text: `Subtask '${subtask.title}' completed!`,
+        duration: 'short',
+        position: 'bottom',
+      });
+>>>>>>> 55a12393c46b4ae710be8431fbb683c82210180c
     }
   }
 }
