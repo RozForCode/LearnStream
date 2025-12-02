@@ -4,13 +4,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
+import { InAppSearchComponent } from '../components/in-app-search/in-app-search.component';
+import { Toast } from '@capacitor/toast';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: 'dashboard.page.html',
   styleUrls: ['dashboard.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCheckbox, IonTextarea, IonButton, IonIcon, CommonModule, FormsModule],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonBadge, IonProgressBar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCheckbox, IonTextarea, IonButton, IonIcon, CommonModule, FormsModule, InAppSearchComponent],
 })
 export class DashboardPage {
   learningTopics = [
@@ -85,8 +87,16 @@ export class DashboardPage {
     }
   }
 
-  onSubtaskChange(event: any, subtask: any, topic: any) {
+  async onSubtaskChange(event: any, subtask: any, topic: any) {
     subtask.completed = event.detail.checked;
     this.updateProgress(topic);
+
+    if (subtask.completed) {
+      await Toast.show({
+        text: `Subtask '${subtask.title}' completed!`,
+        duration: 'short',
+        position: 'bottom',
+      });
+    }
   }
 }

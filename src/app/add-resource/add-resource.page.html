@@ -10,6 +10,7 @@
   <div class="welcome-header">
     <h1 class="gradient-text">Add New Skill 🎯</h1>
     <p>What do you want to learn next?</p>
+    <app-in-app-search [initialUrl]="skill.description"></app-in-app-search>
   </div>
 
   <ion-list lines="none">
@@ -17,7 +18,6 @@
       <ion-input label="Title" labelPlacement="floating" placeholder="e.g. React Native"
         [(ngModel)]="skill.title"></ion-input>
     </ion-item>
-
     <ion-item>
       <ion-select label="Category" labelPlacement="floating" placeholder="Select category" [(ngModel)]="skill.category">
         <ion-select-option value="mobile">Mobile Dev</ion-select-option>
