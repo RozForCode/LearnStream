@@ -1,8 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Add Skill
-    </ion-title>
+    <ion-title> Add Skill </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -10,16 +8,24 @@
   <div class="welcome-header">
     <h1 class="gradient-text">Add New Skill 🎯</h1>
     <p>What do you want to learn next?</p>
-    <app-in-app-search [initialUrl]="skill.description"></app-in-app-search>
   </div>
 
   <ion-list lines="none">
     <ion-item>
-      <ion-input label="Title" labelPlacement="floating" placeholder="e.g. React Native"
-        [(ngModel)]="skill.title"></ion-input>
+      <ion-input
+        label="Title"
+        labelPlacement="floating"
+        placeholder="e.g. React Native"
+        [(ngModel)]="skill.title"
+      ></ion-input>
     </ion-item>
     <ion-item>
-      <ion-select label="Category" labelPlacement="floating" placeholder="Select category" [(ngModel)]="skill.category">
+      <ion-select
+        label="Category"
+        labelPlacement="floating"
+        placeholder="Select category"
+        [(ngModel)]="skill.category"
+      >
         <ion-select-option value="mobile">Mobile Dev</ion-select-option>
         <ion-select-option value="frontend">Frontend</ion-select-option>
         <ion-select-option value="backend">Backend</ion-select-option>
@@ -29,33 +35,13 @@
     </ion-item>
 
     <ion-item>
-      <ion-select label="Current Skill Level" labelPlacement="floating" placeholder="Where are you now?" [(ngModel)]="skill.currentSkillLevel">
-        <ion-select-option value="beginner">Beginner</ion-select-option>
-        <ion-select-option value="intermediate">Intermediate</ion-select-option>
-        <ion-select-option value="advanced">Advanced</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-select label="Learning Goal" labelPlacement="floating" placeholder="What's your objective?" [(ngModel)]="skill.learningGoal">
-        <ion-select-option value="fundamentals">Understand Fundamentals</ion-select-option>
-        <ion-select-option value="hands-on">Hands-on Implementation</ion-select-option>
-        <ion-select-option value="career">Career Prep</ion-select-option>
-        <ion-select-option value="hobby">Hobby / Personal Interest</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-select label="Target Level" labelPlacement="floating" placeholder="Where do you want to be?" [(ngModel)]="skill.targetSkillLevel">
-        <ion-select-option value="basic">Basic Understanding</ion-select-option>
-        <ion-select-option value="proficient">Proficient</ion-select-option>
-        <ion-select-option value="expert">Expert</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-textarea label="Description" labelPlacement="floating" placeholder="Add some notes or links..." rows="5"
-        [(ngModel)]="skill.description"></ion-textarea>
+      <ion-textarea
+        label="Description"
+        labelPlacement="floating"
+        placeholder="Add some notes or links..."
+        rows="5"
+        [(ngModel)]="skill.description"
+      ></ion-textarea>
     </ion-item>
   </ion-list>
 

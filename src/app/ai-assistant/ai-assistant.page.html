@@ -1,35 +1,88 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      AI Assistant
-    </ion-title>
+    <ion-title>AI Assistant</ion-title>
+    <ion-button slot="end" fill="clear" (click)="clearChat()">
+      <ion-icon name="refresh-outline"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <div class="welcome-header ion-text-center ion-margin-bottom">
-    <h2 class="gradient-text" style="font-size: 24px;">AI Tutor 🤖</h2>
-    <p style="color: var(--ion-color-medium);">Ask me anything!</p>
+<ion-content #chatContent [fullscreen]="true" class="chat-content">
+  <!-- Welcome Header (only show when few messages) -->
+  <div *ngIf="messages.length <= 1" class="welcome-section">
+    <div class="ai-avatar">
+      <ion-icon name="sparkles"></ion-icon>
+    </div>
+    <h2>LearnStream AI</h2>
+    <p>Your personal learning assistant</p>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <ion-chip
+        *ngFor="let action of quickActions"
+        (click)="useQuickAction(action)"
+        class="action-chip"
+      >
+        <ion-icon [name]="action.icon"></ion-icon>
+        {{ action.label }}
+      </ion-chip>
+    </div>
   </div>
 
-  <ion-list lines="none" style="background: transparent;">
-    <ion-item *ngFor="let msg of messages" style="--background: transparent; --padding-start: 0;">
-      <div [class]="msg.sender === 'user' ? 'message-container user' : 'message-container ai'">
-        <p>
-          {{ msg.text }}
-        </p>
+  <!-- Chat Messages -->
+  <div class="messages-container">
+    <div
+      *ngFor="let msg of messages"
+      class="message-wrapper"
+      [class.user]="msg.sender === 'user'"
+      [class.ai]="msg.sender === 'ai'"
+    >
+      <div class="message-avatar ai-avatar" *ngIf="msg.sender === 'ai'">
+        <ion-icon name="sparkles"></ion-icon>
       </div>
-    </ion-item>
-  </ion-list>
+
+      <div class="message-avatar user-avatar" *ngIf="msg.sender === 'user'">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </div>
+
+      <div class="message-bubble">
+        <!-- Loading State -->
+        <div *ngIf="msg.isLoading" class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <!-- Message Content -->
+        <div
+          *ngIf="!msg.isLoading"
+          class="message-text"
+          [innerHTML]="formatMessage(msg.text)"
+        ></div>
+      </div>
+    </div>
+  </div>
 </ion-content>
 
-<ion-footer>
-  <ion-toolbar>
-    <ion-item lines="none">
-      <ion-input placeholder="Ask me anything..." [(ngModel)]="newMessage" (keyup.enter)="sendMessage()"></ion-input>
-      <ion-button slot="end" fill="clear" (click)="sendMessage()">
-        <ion-icon name="send"></ion-icon>
-      </ion-button>
-    </ion-item>
-  </ion-toolbar>
+<ion-footer class="chat-footer">
+  <div class="input-container">
+    <ion-input
+      placeholder="Ask me anything..."
+      [(ngModel)]="newMessage"
+      (keyup.enter)="sendMessage()"
+      [disabled]="isLoading"
+      autofocus="true"
+      class="chat-input"
+    ></ion-input>
+    <ion-button
+      fill="solid"
+      shape="round"
+      (click)="sendMessage()"
+      [disabled]="isLoading || newMessage.trim().length === 0"
+      class="send-button"
+    >
+      <ion-icon *ngIf="!isLoading" name="send"></ion-icon>
+      <ion-spinner *ngIf="isLoading" name="dots"></ion-spinner>
+    </ion-button>
+  </div>
 </ion-footer>
