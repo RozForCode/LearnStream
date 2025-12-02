@@ -105,14 +105,14 @@
               >
               <span
                 *ngIf="topic.resourcesStatus === 'loading' || topic.resourcesStatus === 'pending'"
-                class="resources-loading-badge"
+                class="resources-badge resources-loading-badge"
               >
                 <ion-spinner name="dots" color="primary"></ion-spinner>
                 Gathering...
               </span>
               <span
                 *ngIf="topic.resourcesStatus === 'ready'"
-                class="resources-ready-badge"
+                class="resources-badge resources-ready-badge"
               >
                 <ion-icon name="checkmark-circle-outline"></ion-icon>
                 {{ getCompletedResourceCount(topic) }}/{{
