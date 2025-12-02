@@ -12,6 +12,17 @@ $RECYCLE.BIN/
 *.log
 log.txt
 
+./android
+./ios
+./www
+./node_modules
+./package-lock.json
+./package.json
+./tsconfig.json
+./tsconfig.app.json
+./tsconfig.spec.json
+./tsconfig.app.json
+
 
 /.sourcemaps
 /.versions
