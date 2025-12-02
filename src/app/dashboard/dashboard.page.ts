@@ -21,6 +21,10 @@ import {
   IonSpinner,
   IonChip,
   IonSkeletonText,
+  IonItemSliding,
+  IonItemOptions,
+  IonItemOption,
+  AlertController,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -41,6 +45,9 @@ import {
   refreshOutline,
   checkmarkCircleOutline,
   alertCircleOutline,
+  trashOutline,
+  addOutline,
+  checkmarkOutline,
 } from 'ionicons/icons';
 import { Browser } from '@capacitor/browser';
 
@@ -113,6 +120,9 @@ interface LearningTopic {
     IonSpinner,
     IonChip,
     IonSkeletonText,
+    IonItemSliding,
+    IonItemOptions,
+    IonItemOption,
     CommonModule,
     FormsModule,
   ],
@@ -125,7 +135,10 @@ export class DashboardPage implements OnInit, OnDestroy {
   private readonly API_URL = 'http://localhost:3000/api/resources';
   private readonly POLLING_INTERVAL = 3000; // 3 seconds
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private alertController: AlertController
+  ) {
     addIcons({
       chevronDownOutline,
       chevronUpOutline,
@@ -142,6 +155,9 @@ export class DashboardPage implements OnInit, OnDestroy {
       refreshOutline,
       checkmarkCircleOutline,
       alertCircleOutline,
+      trashOutline,
+      addOutline,
+      checkmarkOutline,
     });
   }
 
@@ -431,5 +447,109 @@ export class DashboardPage implements OnInit, OnDestroy {
       (sum, s) => sum + (s.resources?.length || 0),
       0
     );
+  }
+
+  getCompletedResourceCount(topic: LearningTopic): number {
+    // Count resources from completed steps as "completed"
+    return topic.subtasks
+      .filter((s) => s.completed)
+      .reduce((sum, s) => sum + (s.resources?.length || 0), 0);
+  }
+
+  async confirmDeleteRoadmap(topic: LearningTopic) {
+    const alert = await this.alertController.create({
+      header: 'Delete Roadmap',
+      message: `Are you sure you want to delete "${topic.title}"? This action cannot be undone.`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.deleteRoadmap(topic);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  async deleteRoadmap(topic: LearningTopic) {
+    try {
+      const response = await fetch(`${this.API_URL}/${topic._id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remove from local list
+        this.learningTopics = this.learningTopics.filter(
+          (t) => t._id !== topic._id
+        );
+        // Stop polling if active
+        this.stopPolling(topic._id);
+      } else {
+        console.error('Failed to delete roadmap');
+      }
+    } catch (error) {
+      console.error('Error deleting roadmap:', error);
+    }
+  }
+
+  async confirmExtendRoadmap(topic: LearningTopic) {
+    const alert = await this.alertController.create({
+      header: 'Extend Roadmap',
+      message: 'How many additional steps would you like to add?',
+      inputs: [
+        {
+          name: 'steps',
+          type: 'number',
+          placeholder: 'Number of steps (1-5)',
+          min: 1,
+          max: 5,
+          value: 3,
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Add Steps',
+          handler: (data) => {
+            const steps = Math.min(5, Math.max(1, parseInt(data.steps) || 3));
+            this.extendRoadmap(topic, steps);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  async extendRoadmap(topic: LearningTopic, additionalSteps: number) {
+    try {
+      topic.resourcesStatus = 'loading';
+
+      const response = await fetch(`${this.API_URL}/${topic._id}/extend`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ additionalSteps }),
+      });
+
+      if (response.ok) {
+        // Refresh the resource data
+        await this.refreshSingleResource(topic._id);
+        // Start polling for new resources
+        this.startPolling(topic._id);
+      }
+    } catch (error) {
+      console.error('Error extending roadmap:', error);
+      topic.resourcesStatus = 'ready';
+    }
   }
 }

@@ -114,13 +114,29 @@ ion-content {
   }
 }
 
+// Sliding Item
+ion-item-sliding {
+  margin-bottom: 16px;
+}
+
+.roadmap-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
+}
+
+ion-item-option {
+  --border-radius: 0 16px 16px 0;
+}
+
 // Roadmap Card
 .roadmap-card {
   background: #ffffff;
   border-radius: 16px;
-  margin-bottom: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  width: 100%;
 }
 
 .roadmap-header {
@@ -206,59 +222,55 @@ ion-content {
 }
 
 .progress-summary {
-  padding: 0 20px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  padding: 0 20px 12px;
 
-  > span:first-child {
-    font-size: 13px;
-    color: var(--ion-color-medium);
-  }
-
-  .resources-loading-badge {
-    display: inline-flex;
+  .progress-stats {
+    display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--ion-color-primary);
-    background: var(--ion-color-primary-tint);
-    padding: 4px 10px;
-    border-radius: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
 
-    ion-spinner {
-      width: 14px;
-      height: 14px;
+    .steps-count {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+      background: var(--ion-color-light);
+      padding: 4px 10px;
+      border-radius: 8px;
     }
-  }
 
-  .resources-ready-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: var(--ion-color-success);
-    background: var(--ion-color-success-tint);
-    padding: 4px 10px;
-    border-radius: 12px;
+    .resources-loading-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--ion-color-primary);
+      background: var(--ion-color-primary-tint);
+      padding: 4px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
 
-    ion-icon {
-      font-size: 14px;
+      ion-spinner {
+        width: 12px;
+        height: 12px;
+      }
     }
-  }
-}
 
-// Roadmap Actions
-.roadmap-actions {
-  padding: 0 20px 16px;
-  display: flex;
-  gap: 8px;
+    .resources-ready-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--ion-color-success);
+      background: var(--ion-color-success-tint);
+      padding: 4px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
 
-  ion-button {
-    --border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
+      ion-icon {
+        font-size: 12px;
+      }
+    }
   }
 }
 
