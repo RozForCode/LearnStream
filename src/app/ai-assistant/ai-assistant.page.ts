@@ -124,7 +124,7 @@ export class AiAssistantPage implements OnInit, AfterViewChecked {
   executingAction: string | null = null;
   private needsHighlighting = false;
 
-  private readonly API_URL = 'http://localhost:3000/api/ai-assistant';
+  private readonly API_URL = 'https://learnstream-d7cpasdff4fec5hj.canadacentral-01.azurewebsites.net/api/ai-assistant';
 
   quickActions = [
     {

@@ -356,7 +356,7 @@ export class AddResourcePage {
     await loading.present();
 
     try {
-      const response = await fetch('http://localhost:3000/api/resources', {
+      const response = await fetch('https://learnstream-d7cpasdff4fec5hj.canadacentral-01.azurewebsites.net/api/resources', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -85,7 +85,7 @@ export class SharedRoadmapPage implements OnInit {
   error: string | null = null;
   linkCopied = false;
 
-  private readonly API_URL = 'http://localhost:3000/api/resources';
+  private readonly API_URL = 'https://learnstream-d7cpasdff4fec5hj.canadacentral-01.azurewebsites.net/api/resources';
 
   constructor(private route: ActivatedRoute) {
     addIcons({

@@ -31,20 +31,20 @@ export interface NotificationDisplay {
   providedIn: 'root'
 })
 export class NotificationService {
-  private readonly API_URL = 'http://localhost:3000/api/notifications';
-  
+  private readonly API_URL = 'https://learnstream-d7cpasdff4fec5hj.canadacentral-01.azurewebsites.net/api/notifications';
+
   // Observable for active notifications to display
   private activeNotifications = new BehaviorSubject<NotificationDisplay[]>([]);
   public notifications$ = this.activeNotifications.asObservable();
-  
+
   // Observable for countdown to next notification
   private nextNotificationCountdown = new BehaviorSubject<{ notification: ScheduledNotification | null; timeUntil: number; formatted: string } | null>(null);
   public countdown$ = this.nextNotificationCountdown.asObservable();
-  
+
   // Polling subscription
   private pollingSubscription: Subscription | null = null;
   private countdownSubscription: Subscription | null = null;
-  
+
   // Track last seen notification to avoid duplicates
   private lastSeenNotificationIds = new Set<string>();
 
@@ -103,10 +103,10 @@ export class NotificationService {
 
       // Filter for notifications sent in the last 30 seconds that we haven't seen
       const thirtySecondsAgo = new Date(Date.now() - 30000);
-      
+
       for (const notif of notifications) {
         const sentAt = new Date(notif.sentAt || notif.createdAt);
-        
+
         if (sentAt > thirtySecondsAgo && !this.lastSeenNotificationIds.has(notif._id)) {
           this.lastSeenNotificationIds.add(notif._id);
           this.showNotification({
@@ -142,7 +142,7 @@ export class NotificationService {
       }
 
       const data = await response.json();
-      
+
       if (data.notification) {
         this.nextNotificationCountdown.next({
           notification: data.notification,

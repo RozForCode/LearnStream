@@ -75,14 +75,14 @@ interface ResourceLink {
   title: string;
   url: string;
   type:
-    | 'documentation'
-    | 'tutorial'
-    | 'video'
-    | 'course'
-    | 'article'
-    | 'github'
-    | 'tool'
-    | 'other';
+  | 'documentation'
+  | 'tutorial'
+  | 'video'
+  | 'course'
+  | 'article'
+  | 'github'
+  | 'tool'
+  | 'other';
 }
 
 interface Note {
@@ -185,8 +185,8 @@ export class DashboardPage implements OnInit, OnDestroy {
   shareModalTopic: LearningTopic | null = null;
   shareUrl = '';
 
-  private readonly API_URL = 'http://localhost:3000/api/resources';
-  private readonly PROGRESS_URL = 'http://localhost:3000/api/progress';
+  private readonly API_URL = 'https://learnstream-d7cpasdff4fec5hj.canadacentral-01.azurewebsites.net/api/resources';
+  private readonly PROGRESS_URL = 'https://learnstream-d7cpasdff4fec5hj.canadacentral-01.azurewebsites.net/api/progress';
   private readonly POLLING_INTERVAL = 3000;
 
   constructor(
